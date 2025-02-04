@@ -10,149 +10,157 @@
 </head>
 
 <body>
+  <div class="py-1"></div>
   <div class="container-md">
     <header>
       <h1>顧客訂單查詢</h1>
     </header>
     <main>
-      <input type="number" placeholder="請輸入電話號碼" /> <input type="submit" value="查詢">
-      <div class="border">
-        <h5>
-          <span>顧客姓名：</span><span>莊小雁</span>
-          <span>電話：</span><span>0912-345678</span>
-          <span>地址：</span><span>彰化縣永靖鄉</span>
-        </h5>
+      <div class="d-flex">
+        <input type="number" placeholder="請輸入電話號碼" class="rounded px-2 me-2" /> <button class="btn btn-dark">查詢</button>
       </div>
 
-      <!-- 訂單明細div -->
-      <div>
-        <table class="table">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>訂購內容</th>
-              <th>總金額($NT)</th>
-              <th>日期</th>
-            </tr>
-          </thead>
+      <div class="border border-dark border-2 rounded px-3 py-2 my-3">
+        <div class="border-bottom border-2 border-dark">
+          <h5>
+            <span>顧客姓名：</span><span>莊小雁</span>
+            <span>電話：</span><span>0912-345678</span>
+            <span>地址：</span><span>彰化縣永靖鄉</span>
+          </h5>
+        </div>
 
-          <tbody>
-            <!-- 訂單1 -->
-            <tr>
-              <td>
-                1
-              </td>
-              <td>
-                <table class="table">
-                  <thead>
-                    <tr>
-                      <th>品種</th>
-                      <th>數量</th>
-                      <th>價格</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <!-- 一筆訂單中的品種1 -->
-                    <tr>
-                      <td>
-                        紅寶石芭樂苗
-                      </td>
-                      <td>
-                        10
-                      </td>
-                      <td>
-                        120
-                      </td>
-                    </tr>
+        <!-- 訂單明細div -->
+        <div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>訂購內容</th>
+                <th>總金額($NT)</th>
+                <th>日期</th>
+              </tr>
+            </thead>
 
-                    <!-- 品種2 -->
-                    <tr>
-                      <td>
-                        珍珠芭樂苗
-                      </td>
-                      <td>
-                        5
-                      </td>
-                      <td>
-                        60
-                      </td>
-                    </tr>
+            <tbody>
+              <!-- 訂單1 -->
+              <tr>
+                <td>
+                  1
+                </td>
+                <td>
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>品種</th>
+                        <th>數量</th>
+                        <th>價格</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <!-- 一筆訂單中的品種1 -->
+                      <tr>
+                        <td>
+                          紅寶石芭樂苗
+                        </td>
+                        <td>
+                          10
+                        </td>
+                        <td>
+                          120
+                        </td>
+                      </tr>
 
-                  </tbody>
-                </table>
-              </td>
-              <td>
-                1500
-              </td>
-              <td>
-                2025-1-1
-              </td>
-            </tr>
+                      <!-- 品種2 -->
+                      <tr>
+                        <td>
+                          珍珠芭樂苗
+                        </td>
+                        <td>
+                          5
+                        </td>
+                        <td>
+                          60
+                        </td>
+                      </tr>
 
-            <!-- 訂單2 -->
-            <tr>
-              <td>
-                2
-              </td>
-              <td>
-                <table class="table">
-                  <thead>
-                    <tr>
-                      <th>品種</th>
-                      <th>數量</th>
-                      <th>價格</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <!-- 一筆訂單中的品種1 -->
-                    <tr>
-                      <td>
-                        黃金蜜芭樂苗
-                      </td>
-                      <td>
-                        10
-                      </td>
-                      <td>
-                        120
-                      </td>
-                    </tr>
+                    </tbody>
+                  </table>
+                </td>
+                <td>
+                  1500
+                </td>
+                <td>
+                  2025-1-1
+                </td>
+              </tr>
 
-                    <!-- 品種2 -->
-                    <tr>
-                      <td>
-                        紅鑽芭樂苗
-                      </td>
-                      <td>
-                        5
-                      </td>
-                      <td>
-                        120
-                      </td>
-                    </tr>
+              <!-- 訂單2 -->
+              <tr>
+                <td>
+                  2
+                </td>
+                <td>
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>品種</th>
+                        <th>數量</th>
+                        <th>價格</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <!-- 一筆訂單中的品種1 -->
+                      <tr>
+                        <td>
+                          黃金蜜芭樂苗
+                        </td>
+                        <td>
+                          10
+                        </td>
+                        <td>
+                          120
+                        </td>
+                      </tr>
 
-                  </tbody>
-                </table>
-              </td>
-              <td>
-                1800
-              </td>
-              <td>
-                2024-1-1
-              </td>
-            </tr>
-          </tbody>
-        </table>
+                      <!-- 品種2 -->
+                      <tr>
+                        <td>
+                          紅鑽芭樂苗
+                        </td>
+                        <td>
+                          5
+                        </td>
+                        <td>
+                          120
+                        </td>
+                      </tr>
+
+                    </tbody>
+                  </table>
+                </td>
+                <td>
+                  1800
+                </td>
+                <td>
+                  2024-1-1
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <!-- 新增會員與訂單div -->
-      <input type="submit" value="新增會員">
-      <div class="border rounded">
+      <button class="btn btn-dark">新增會員</button>
+      <div class="border border-dark border-2 rounded px-3 py-2 my-3">
         <form>
+          <div class="py-1"></div>
           <h5>會員資料</h5>
-          <p>姓名：<input type="text"></p>
-          <p>電話：<input type="tel"></p>
-          <p>地址：<input type="text"></p>
-          <hr>
+          <p>姓名：<input type="text" class="rounded"></p>
+          <p>電話：<input type="tel" class="rounded"></p>
+          <p>地址：<input type="text" class="rounded"></p>
+          <hr class="border border-dark">
+
           <h5>訂購內容</h5>
           <table class="table">
             <thead>
@@ -167,38 +175,38 @@
               <tr>
                 <td>
                   <!-- 品種總共有哪些？可以再跟mom check -->
-                  <select>
+                  <select class="rounded border-2 p-1">
                     <option value="1">紅寶石芭樂苗</option>
                     <option value="2">黃金蜜芭樂苗</option>
                     <option value="3">紅鑽芭樂苗</option>
                     <option value="4" selected>珍珠芭樂苗</option>
                   </select>
                 </td>
-                <td><input type="number" style="width: 60px;"></td>
-                <td><input type="number" style="width: 90px;"></td>
+                <td><input type="number" style="width: 60px;" class="rounded"></td>
+                <td><input type="number" style="width: 90px;" class="rounded"></td>
               </tr>
 
               <!-- 品種2 -->
               <tr>
                 <td>
                   <!-- 品種總共有哪些？可以再跟mom check -->
-                  <select>
+                  <select class="rounded border-2 p-1">
                     <option value="1">紅寶石芭樂苗</option>
                     <option value="2">黃金蜜芭樂苗</option>
                     <option value="3">紅鑽芭樂苗</option>
                     <option value="4" selected>珍珠芭樂苗</option>
                   </select>
                 </td>
-                <td><input type="number" style="width: 60px;"></td>
-                <td><input type="number" style="width: 90px;"></td>
+                <td><input type="number" style="width: 60px;" class="rounded"></td>
+                <td><input type="number" style="width: 90px;" class="rounded"></td>
               </tr>
-              
+
             </tbody>
           </table>
-          <button class="btn btn-secondary btn-sm">+</button>
+          <div id="addVarietyBtn" class="btn btn-secondary btn-sm">+ 品種</div>
           <!-- 還要再加上js動態出現點擊後 => 多出一列可以輸入～ -->
           <p></p>
-          <h6><span>總金額：</span><span>1900</span></h6>
+          <h5><span>總金額：</span><span>1900</span></h5>
 
           <div class="text-center">
             <button class="btn btn-secondary">新增訂單</button>
@@ -208,6 +216,8 @@
       </div>
     </main>
   </div>
+
+  <script src="index.js"></script>
 </body>
 
 </html>
