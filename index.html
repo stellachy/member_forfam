@@ -17,10 +17,10 @@
     </header>
     <main>
       <div class="d-flex">
-        <input type="number" placeholder="請輸入電話號碼" class="rounded px-2 me-2" /> <div class="btn btn-dark">查詢</div>
+        <input type="number" placeholder="請輸入電話號碼" class="rounded px-2 me-2" /> <div id="cOrderSearchBtn" class="btn btn-dark">查詢</div>
       </div>
 
-      <div class="border border-dark border-2 rounded px-3 py-2 my-3">
+      <div id="cOrderResult" class="border border-dark border-2 rounded px-3 py-2 my-3 d-none">
         <div class="border-bottom border-2 border-dark">
           <h5>
             <span>顧客姓名：</span><span>莊小雁</span>
@@ -151,9 +151,9 @@
       </div>
 
       <!-- 新增會員與訂單div -->
-      <div class="btn btn-dark">新增會員</div>
+      <div id="addMemberBtn" class="btn btn-dark d-none">新增會員</div>
 
-      <div class="border border-dark border-2 rounded px-3 py-2 my-3">
+      <div class="border border-dark border-2 rounded px-3 py-2 my-3 d-none">
         <form id="orderForm">
           <div class="py-1"></div>
           <h5>會員資料</h5>

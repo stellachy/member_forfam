@@ -1,4 +1,4 @@
-// ============= related to 訂單 =============
+// ============= related to 新增訂單 =============
 // 點擊[＋品種]產生新的一列
 const addVarietyBtn = document.getElementById('addVarietyBtn');
 addVarietyBtn.addEventListener('click', showVarRow);  // btn會一直跑掉耶 => 換成div就沒問題～
@@ -119,3 +119,38 @@ function createOrder() {
   document.getElementById('orderForm').reset();
 }
 
+// 點擊[新增會員]才會出現新增訂單的form
+const addMemberBtn = document.getElementById('addMemberBtn');
+addMemberBtn.addEventListener('click', () => {
+  // document.getElementById('orderForm').parentElement.classList.remove('d-none');
+  
+  // 使用toggle可以讓點擊[新增會員]時，可以開 or 合orderForm
+  document.getElementById('orderForm').parentElement.classList.toggle('d-none');
+});
+
+// ============= related to 查詢訂單 =============
+// 點擊[查詢]，
+const cOrderSearchBtn = document.getElementById('cOrderSearchBtn');
+cOrderSearchBtn.addEventListener('click', () => {
+  // 取得使用者電話
+  const cTel = cOrderSearchBtn.previousElementSibling.value; 
+
+  // 到DB中透過cTel取到cId
+
+  let cId = 1;  // 之後串接資料庫取值！
+  if (cId) {  // 若DB中有此人，
+    // 拿該cId 的所有訂單資料 from DB
+
+    // 將資料呈現在畫面上（到時候拿cOrderResult寫好的html做修改會更清楚）
+
+    // 出現cOrderResult的容器
+    document.getElementById('cOrderResult').classList.remove('d-none');
+  } else {  // 若無，出現新增訂單的畫面
+    document.getElementById('cOrderResult').innerText = '查無此會員，請新增會員及訂單！';
+
+    document.getElementById('cOrderResult').classList.remove('d-none');
+    
+  }
+
+  addMemberBtn.classList.remove('d-none');  // 之後可能要調整新增會員／新增訂單要是不一樣的？
+})
