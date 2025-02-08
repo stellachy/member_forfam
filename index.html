@@ -17,7 +17,7 @@
     </header>
     <main>
       <div class="d-flex">
-        <input type="number" placeholder="請輸入電話號碼" class="rounded px-2 me-2" /> <button class="btn btn-dark">查詢</button>
+        <input type="number" placeholder="請輸入電話號碼" class="rounded px-2 me-2" /> <div class="btn btn-dark">查詢</div>
       </div>
 
       <div class="border border-dark border-2 rounded px-3 py-2 my-3">
@@ -36,7 +36,7 @@
               <tr>
                 <th>#</th>
                 <th>訂購內容</th>
-                <th>總金額($NT)</th>
+                <th>總金額(NT$)</th>
                 <th>日期</th>
               </tr>
             </thead>
@@ -151,14 +151,15 @@
       </div>
 
       <!-- 新增會員與訂單div -->
-      <button class="btn btn-dark">新增會員</button>
+      <div class="btn btn-dark">新增會員</div>
+
       <div class="border border-dark border-2 rounded px-3 py-2 my-3">
-        <form>
+        <form id="orderForm">
           <div class="py-1"></div>
           <h5>會員資料</h5>
-          <p>姓名：<input type="text" class="rounded"></p>
-          <p>電話：<input type="tel" class="rounded"></p>
-          <p>地址：<input type="text" class="rounded"></p>
+          <p>姓名：<input id="cName" type="text" class="rounded"></p>
+          <p>電話：<input id="cTel" type="tel" class="rounded"></p>
+          <p>地址：<input id="cAddr" type="text" class="rounded" style="width: 300px;" ></p>
           <hr class="border border-dark">
 
           <h5>訂購內容</h5>
@@ -168,11 +169,12 @@
                 <th>品種</th>
                 <th>數量</th>
                 <th>價格</th>
+                <th>刪除</th>
               </tr>
             </thead>
             <tbody>
               <!-- 品種1 -->
-              <tr>
+              <tr class="var-row">
                 <td>
                   <!-- 品種總共有哪些？可以再跟mom check -->
                   <select class="rounded border-2 p-1">
@@ -184,10 +186,13 @@
                 </td>
                 <td><input type="number" style="width: 60px;" class="rounded"></td>
                 <td><input type="number" style="width: 90px;" class="rounded"></td>
+                <td>
+                  <div class="btn btn-secondary btn-sm btn-delete-variety">刪除</div>
+                </td>
               </tr>
 
               <!-- 品種2 -->
-              <tr>
+              <tr class="var-row">
                 <td>
                   <!-- 品種總共有哪些？可以再跟mom check -->
                   <select class="rounded border-2 p-1">
@@ -199,17 +204,23 @@
                 </td>
                 <td><input type="number" style="width: 60px;" class="rounded"></td>
                 <td><input type="number" style="width: 90px;" class="rounded"></td>
+                <td>
+                  <div class="btn btn-secondary btn-sm btn-delete-variety">刪除</div>
+                </td>
               </tr>
 
             </tbody>
           </table>
           <div id="addVarietyBtn" class="btn btn-secondary btn-sm">+ 品種</div>
-          <!-- 還要再加上js動態出現點擊後 => 多出一列可以輸入～ -->
-          <p></p>
-          <h5><span>總金額：</span><span>1900</span></h5>
+          <hr class="border border-dark">
 
-          <div class="text-center">
-            <button class="btn btn-secondary">新增訂單</button>
+          <div class="d-flex justify-content-between">
+            <h5><span>總金額：NT$ </span><span id="oTotal">0</span></h5>
+            <h5>訂單日期：<input id="oDate" type="date" class="rounded"></h5>
+          </div>
+
+          <div class="text-center m-1">
+            <div id="addOrderBtn" class="btn btn-secondary">新增訂單</div>
           </div>
 
         </form>
