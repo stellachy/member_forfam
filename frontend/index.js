@@ -78,10 +78,9 @@ document.querySelectorAll('.var-row').forEach(row => {
 const addOrderBtn = document.getElementById('addOrderBtn');
 addOrderBtn.addEventListener('click', createOrder);
 function createOrder() {
-  // 取得使用者輸入資料
   // 會員資料
   const cName = document.getElementById('cName').value;
-  const cTel = document.getElementById('cTel').value;  // 也許可以比對資料庫，不讓重複新增（later）
+  const cTel = document.getElementById('cTel').value;
   const cAddr = document.getElementById('cAddr').value;
 
   // 訂單內容
@@ -101,7 +100,7 @@ function createOrder() {
 
   // 訂單日期
   const oDate = document.getElementById('oDate').value;
-  
+
   // 一筆訂單的data要長這樣：
   const cId = 1;  // 這邊先fake cId，實際需要從資料庫端拿到
   const order = {
@@ -113,19 +112,41 @@ function createOrder() {
 
   // 處理required的input
 
-  // 傳送至後端（later）
+  // 比對資料庫，如果tel已經存在，拿取該cId
+  // 只需要利用cId，新增訂單
+  if (cId) {
+    // 串接「新增訂單api」
+  } else {    // 如果tel不存在
+    // 串接「新增會員並建立訂單api」
+  }
 
   // 清除使用者輸入
   document.getElementById('orderForm').reset();
 }
 
-// 點擊[新增會員]才會出現新增訂單的form
+// 點擊[新增會員/訂單]才會出現新增訂單的form
 const addMemberBtn = document.getElementById('addMemberBtn');
 addMemberBtn.addEventListener('click', () => {
   // document.getElementById('orderForm').parentElement.classList.remove('d-none');
-  
+
   // 使用toggle可以讓點擊[新增會員]時，可以開 or 合orderForm
   document.getElementById('orderForm').parentElement.classList.toggle('d-none');
+
+  if (addMemberBtn.innerText == '新增訂單') {
+    // 透過cId 取得該會員的資料  // later from DB
+    let cName = '莊小雁';
+    let cTel = '0912345678';
+    let cAddr = '彰化縣永靖鄉';
+
+    document.getElementById('cName').value = cName;
+    document.getElementById('cName').setAttribute('disabled', true);
+
+    document.getElementById('cTel').value = cTel;
+    document.getElementById('cTel').setAttribute('disabled', true);
+
+    document.getElementById('cAddr').value = cAddr;
+    document.getElementById('cAddr').setAttribute('disabled', true);
+  }
 });
 
 // ============= related to 查詢訂單 =============
@@ -133,11 +154,11 @@ addMemberBtn.addEventListener('click', () => {
 const cOrderSearchBtn = document.getElementById('cOrderSearchBtn');
 cOrderSearchBtn.addEventListener('click', () => {
   // 取得使用者電話
-  const cTel = cOrderSearchBtn.previousElementSibling.value; 
+  const cTel = cOrderSearchBtn.previousElementSibling.value;
 
   // 到DB中透過cTel取到cId
 
-  let cId = 1;  // 之後串接資料庫取值！
+  let cId = 1;  // 之後串接資料庫取值！ => 並將cid寫入localStorage？
   if (cId) {  // 若DB中有此人，
     // 拿該cId 的所有訂單資料 from DB
 
@@ -145,12 +166,13 @@ cOrderSearchBtn.addEventListener('click', () => {
 
     // 出現cOrderResult的容器
     document.getElementById('cOrderResult').classList.remove('d-none');
+    addMemberBtn.innerText = '新增訂單';
   } else {  // 若無，出現新增訂單的畫面
     document.getElementById('cOrderResult').innerText = '查無此會員，請新增會員及訂單！';
 
     document.getElementById('cOrderResult').classList.remove('d-none');
-    
+
   }
 
-  addMemberBtn.classList.remove('d-none');  // 之後可能要調整新增會員／新增訂單要是不一樣的？
+  addMemberBtn.classList.remove('d-none');
 })
