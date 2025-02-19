@@ -77,51 +77,105 @@ document.querySelectorAll('.var-row').forEach(row => {
 // 點擊[新增訂單]可以新增一筆訂單資料
 const addOrderBtn = document.getElementById('addOrderBtn');
 addOrderBtn.addEventListener('click', createOrder);
-function createOrder() {
+async function createOrder() {
   // 會員資料
-  const cName = document.getElementById('cName').value;
-  const cTel = document.getElementById('cTel').value;
-  const cAddr = document.getElementById('cAddr').value;
+  const name = document.getElementById('cName').value;
+  const tel = document.getElementById('cTel').value;
+  const addr = document.getElementById('cAddr').value;
 
   // 訂單內容
-  const orderDetails = [];
+  const details = [];
   document.querySelectorAll('.var-row').forEach(row => {
     const selectedIndex = row.children[0].children[0].selectedIndex;
     const oVar = row.children[0].children[0].children[selectedIndex].text;
     const oNum = row.children[1].children[0].value;
     const oPrice = row.children[2].children[0].value;
 
-    orderDetails.push({
-      oVar,
-      oNum,
-      oPrice
+    details.push({
+      var: oVar,
+      num: oNum,
+      price: oPrice
     });
   });
 
   // 訂單日期
-  const oDate = document.getElementById('oDate').value;
+  const date = document.getElementById('oDate').value;
 
-  // 一筆訂單的data要長這樣：
-  const cId = 1;  // 這邊先fake cId，實際需要從資料庫端拿到
-  const order = {
-    cId,
-    orderDetails,
-    oDate
-  };
-  console.log(order);  // okie
+  const cid = sessionStorage.getItem('cId') || '';
 
-  // 處理required的input
+  // 處理required的input ／ phonevalidation as well?
 
-  // 比對資料庫，如果tel已經存在，拿取該cId
-  // 只需要利用cId，新增訂單
-  if (cId) {
+  
+  if (cid) {  // 若已是會員(有cid)，新增訂單
     // 串接「新增訂單api」
-  } else {    // 如果tel不存在
-    // 串接「新增會員並建立訂單api」
-  }
+    const url = 'http://127.0.0.1:8000/api/o';
 
-  // 清除使用者輸入
-  document.getElementById('orderForm').reset();
+    const order = {
+      cid,
+      details,
+      date
+    };
+
+    try {
+      const response = await fetch(url, {
+        method: 'post',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(order)
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP 錯誤！狀態碼：${response.status}`);
+      } else {
+        alert('新增訂單成功！');
+        // 清除使用者輸入
+        document.getElementById('orderForm').reset();
+        // 收合新增訂單表
+        document.getElementById('orderForm').parentElement.classList.add('d-none');
+        // 重新觸發一次查詢，讓訂單表單 有變化後 立即呈現
+        searchOrder();
+      }
+
+    } catch (error) {
+      console.error('API請求失敗', error);
+      alert("伺服器連線失敗，請稍後再試！");
+    }
+
+  } else {    // 如果tel不存在 (沒有cid)，新增會員及訂單
+    // 串接「新增會員並建立訂單api」
+    const url = 'http://127.0.0.1:8000/api/c';
+
+    const order = {
+      name,
+      tel,
+      addr,
+      details,
+      date
+    };
+
+    try {
+      const response = await fetch(url, {
+        method: 'post',
+        headers: {'content-type': 'application/json'},
+        body: JSON.stringify(order)
+      })
+  
+      if (!response.ok) {
+        throw new Error(`HTTP 錯誤！狀態碼：${response.status}`);
+      } else {
+        alert('新增訂單成功！');
+        // 清除使用者輸入
+        document.getElementById('orderForm').reset();
+        // 收合新增訂單表
+        document.getElementById('orderForm').parentElement.classList.add('d-none');
+        // 重新觸發一次查詢，讓訂單表單 有變化後 立即呈現
+        searchOrder();
+      }
+    } catch (error) {
+      console.error('API請求失敗', error);
+      alert("伺服器連線失敗，請稍後再試！");
+    }
+
+  }
 }
 
 // 點擊[新增會員/訂單]才會出現新增訂單的form
@@ -138,8 +192,8 @@ addMemberBtn.addEventListener('click', async () => {
     const url = `http://127.0.0.1:8000/api/c/${cId}`;
     const response = await fetch(url);
     const resultObj = await response.json();
-    
-    const {name, tel, addr} = resultObj;
+
+    const { name, tel, addr } = resultObj;
 
     document.getElementById('cName').value = name;
     document.getElementById('cName').setAttribute('disabled', true);
@@ -149,6 +203,16 @@ addMemberBtn.addEventListener('click', async () => {
 
     document.getElementById('cAddr').value = addr;
     document.getElementById('cAddr').setAttribute('disabled', true);
+  } else {
+    document.getElementById('cName').value = '';
+    document.getElementById('cName').removeAttribute('disabled', true);
+
+    const cTel = cOrderSearchBtn.previousElementSibling.value;
+    document.getElementById('cTel').value = cTel;  // 將查詢的電話自動帶入輸入欄
+    document.getElementById('cTel').removeAttribute('disabled', true);
+
+    document.getElementById('cAddr').value = '';
+    document.getElementById('cAddr').removeAttribute('disabled', true);
   }
 });
 
@@ -161,7 +225,10 @@ function validateTel(tel) {
 
 // 輸入電話號碼後，點擊[查詢]
 const cOrderSearchBtn = document.getElementById('cOrderSearchBtn');
-cOrderSearchBtn.addEventListener('click', async () => {
+cOrderSearchBtn.addEventListener('click', searchOrder);
+async function searchOrder() {
+  // 清除sessionStorage中的cid
+  sessionStorage.removeItem('cId');
   // 取得使用者電話
   const cTel = cOrderSearchBtn.previousElementSibling.value;
 
@@ -271,6 +338,8 @@ cOrderSearchBtn.addEventListener('click', async () => {
     } else {  // 若無DB中無此人，出現新增訂單的畫面
       document.getElementById('cOrderResult').innerText = '查無此會員，請新增會員及訂單！';
 
+      addMemberBtn.innerText = '新增會員';
+
       document.getElementById('cOrderResult').classList.remove('d-none');
     }
 
@@ -279,4 +348,4 @@ cOrderSearchBtn.addEventListener('click', async () => {
     console.error("API請求失敗", error);
     alert("伺服器連線失敗，請稍後再試！");
   }
-})
+}
