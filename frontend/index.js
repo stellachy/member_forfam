@@ -34,6 +34,7 @@ function showVarRow() {
 
   orderBody.appendChild(row);
   setDelBtn();
+  rowChange();
 
   // 辨識已經出現過的選項？
 }
@@ -55,8 +56,8 @@ setDelBtn();
 function calTotal() {
   let total = 0;
   document.querySelectorAll('.var-row').forEach(row => {
-    const oNum = row.children[1].children[0].value;
-    const oPrice = row.children[2].children[0].value;
+    const oNum = parseInt(row.children[1].children[0].value, 10) || 0;
+    const oPrice = parseInt(row.children[2].children[0].value, 10) || 0;
 
     total += oNum * oPrice;
   });
@@ -66,56 +67,38 @@ function calTotal() {
 }
 
 // 觸發計算金額的時機（當數量、價格有變動時）
-document.querySelectorAll('.var-row').forEach(row => {
-  const numDOM = row.children[1].children[0];
-  const priceDOM = row.children[2].children[0];
+function rowChange() {
+  document.querySelectorAll('.var-row').forEach(row => {
+    const numDOM = row.children[1].children[0];
+    const priceDOM = row.children[2].children[0];
+  
+    numDOM.addEventListener('change', calTotal);
+    priceDOM.addEventListener('change', calTotal);
+  });
+}
+// 初始設定品種列的觸發
+rowChange();
 
-  numDOM.addEventListener('change', calTotal);
-  priceDOM.addEventListener('change', calTotal);
-});
 
 // 點擊[新增訂單]可以新增一筆訂單資料
 const addOrderBtn = document.getElementById('addOrderBtn');
 addOrderBtn.addEventListener('click', createOrder);
 async function createOrder() {
-  // 會員資料
-  const name = document.getElementById('cName').value;
-  const tel = document.getElementById('cTel').value;
-  const addr = document.getElementById('cAddr').value;
-
-  // 訂單內容
-  const details = [];
-  document.querySelectorAll('.var-row').forEach(row => {
-    const selectedIndex = row.children[0].children[0].selectedIndex;
-    const oVar = row.children[0].children[0].children[selectedIndex].text;
-    const oNum = row.children[1].children[0].value;
-    const oPrice = row.children[2].children[0].value;
-
-    details.push({
-      var: oVar,
-      num: oNum,
-      price: oPrice
-    });
-  });
-
-  // 訂單日期
-  const date = document.getElementById('oDate').value;
+  const details = validateInputs();
+  if (!details) return;
 
   const cid = sessionStorage.getItem('cId') || '';
-
-  // 處理required的input ／ phonevalidation as well?
-
-  
-  if (cid) {  // 若已是會員(有cid)，新增訂單
-    // 串接「新增訂單api」
-    const url = 'http://127.0.0.1:8000/api/o';
-
-    const order = {
-      cid,
+  const url = cid ? 'http://127.0.0.1:8000/api/o' : 'http://127.0.0.1:8000/api/c';
+  const order = cid
+    ? {cid, details, date: document.getElementById('oDate').value}
+    : {
+      name: document.getElementById('cName').value,
+      tel: document.getElementById('cTel').value,
+      addr: document.getElementById('cAddr').value,
       details,
-      date
+      date: document.getElementById('oDate').value
     };
-
+  
     try {
       const response = await fetch(url, {
         method: 'post',
@@ -139,43 +122,54 @@ async function createOrder() {
       console.error('API請求失敗', error);
       alert("伺服器連線失敗，請稍後再試！");
     }
+}
 
-  } else {    // 如果tel不存在 (沒有cid)，新增會員及訂單
-    // 串接「新增會員並建立訂單api」
-    const url = 'http://127.0.0.1:8000/api/c';
+// 驗證使用者訂單之輸入
+function validateInputs() {
+  const name = document.getElementById('cName').value.trim();
+  const tel = document.getElementById('cTel').value.trim();
+  const addr = document.getElementById('cAddr').value.trim();
+  const date = document.getElementById('oDate').value.trim();
 
-    const order = {
-      name,
-      tel,
-      addr,
-      details,
-      date
-    };
+  // 手機號碼格式驗證（09 開頭，共 10 碼）
+  const phoneRegex = /^09\d{8}$/;
 
-    try {
-      const response = await fetch(url, {
-        method: 'post',
-        headers: {'content-type': 'application/json'},
-        body: JSON.stringify(order)
-      })
-  
-      if (!response.ok) {
-        throw new Error(`HTTP 錯誤！狀態碼：${response.status}`);
-      } else {
-        alert('新增訂單成功！');
-        // 清除使用者輸入
-        document.getElementById('orderForm').reset();
-        // 收合新增訂單表
-        document.getElementById('orderForm').parentElement.classList.add('d-none');
-        // 重新觸發一次查詢，讓訂單表單 有變化後 立即呈現
-        searchOrder();
-      }
-    } catch (error) {
-      console.error('API請求失敗', error);
-      alert("伺服器連線失敗，請稍後再試！");
+  if (!name) {
+    alert("請輸入姓名！");
+    return false;
+  }
+  if (!tel || !phoneRegex.test(tel)) {
+    alert("請輸入有效的手機號碼（09 開頭，共 10 碼）！");
+    return false;
+  }
+  if (!addr) {
+    alert("請輸入地址！");
+    return false;
+  }
+  if (!date) {
+    alert("請選擇訂單日期！");
+    return false;
+  }
+
+  // 檢查訂單內容
+  const details = [];
+  let isValid = true;
+
+  document.querySelectorAll('.var-row').forEach(row => {
+    const selectedIndex = row.children[0].children[0].selectedIndex;
+    const oVar = row.children[0].children[0].children[selectedIndex].text.trim();
+    const oNum = parseInt(row.children[1].children[0].value, 10);
+    const oPrice = parseInt(row.children[2].children[0].value, 10);
+
+    if (!oVar || isNaN(oNum) || oNum <= 0 || isNaN(oPrice) || oPrice <= 0) {
+      alert("請輸入有效的訂單內容！");
+      isValid = false;
     }
 
-  }
+    details.push({ var: oVar, num: oNum, price: oPrice });
+  });
+  
+  return isValid ? details : false;
 }
 
 // 點擊[新增會員/訂單]才會出現新增訂單的form
@@ -300,7 +294,7 @@ async function searchOrder() {
       `}).join('');
 
       // 將資料呈現在畫面上
-      document.getElementById('cOrderResult').innerHTML = `
+      document.getElementById('cOrderResult').innerHTML = DOMPurify.sanitize(`
                 <div class="border-bottom border-2 border-dark">
                   <h5>
                     <span>顧客姓名：</span><span>${name}</span>
@@ -326,7 +320,7 @@ async function searchOrder() {
                     </tbody>
                   </table>
                 </div>
-      `;
+      `);
 
       // 出現cOrderResult的容器
       document.getElementById('cOrderResult').classList.remove('d-none');
