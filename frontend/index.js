@@ -126,25 +126,28 @@ function createOrder() {
 
 // 點擊[新增會員/訂單]才會出現新增訂單的form
 const addMemberBtn = document.getElementById('addMemberBtn');
-addMemberBtn.addEventListener('click', () => {
+addMemberBtn.addEventListener('click', async () => {
   // document.getElementById('orderForm').parentElement.classList.remove('d-none');
 
   // 使用toggle可以讓點擊[新增會員]時，可以開 or 合orderForm
   document.getElementById('orderForm').parentElement.classList.toggle('d-none');
 
   if (addMemberBtn.innerText == '新增訂單') {
-    // 透過cId 取得該會員的資料  // later from DB
-    let cName = '莊小雁';
-    let cTel = '0912345678';
-    let cAddr = '彰化縣永靖鄉';
+    // 透過cId 取得該會員的資料
+    let cId = sessionStorage.getItem('cId');
+    const url = `http://127.0.0.1:8000/api/c/${cId}`;
+    const response = await fetch(url);
+    const resultObj = await response.json();
+    
+    const {name, tel, addr} = resultObj;
 
-    document.getElementById('cName').value = cName;
+    document.getElementById('cName').value = name;
     document.getElementById('cName').setAttribute('disabled', true);
 
-    document.getElementById('cTel').value = cTel;
+    document.getElementById('cTel').value = tel;
     document.getElementById('cTel').setAttribute('disabled', true);
 
-    document.getElementById('cAddr').value = cAddr;
+    document.getElementById('cAddr').value = addr;
     document.getElementById('cAddr').setAttribute('disabled', true);
   }
 });
@@ -181,7 +184,7 @@ cOrderSearchBtn.addEventListener('click', async () => {
 
     if (resultObj.exists) {  // 若DB中有此人，
       // 解構賦值拿該cId 的客戶資料、所有訂單資料
-      const { name, tel, addr, orders } = resultObj.customer;
+      const { id, name, tel, addr, orders } = resultObj.customer;
 
       const orderHTML = orders.map((order, index) => {
         // 產生品種的<tr></tr>
@@ -260,7 +263,11 @@ cOrderSearchBtn.addEventListener('click', async () => {
 
       // 出現cOrderResult的容器
       document.getElementById('cOrderResult').classList.remove('d-none');
+
       addMemberBtn.innerText = '新增訂單';
+      // 將cId寫入sessionStorage
+      sessionStorage.setItem('cId', id);
+
     } else {  // 若無DB中無此人，出現新增訂單的畫面
       document.getElementById('cOrderResult').innerText = '查無此會員，請新增會員及訂單！';
 

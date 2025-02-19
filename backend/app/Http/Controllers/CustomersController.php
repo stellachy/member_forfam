@@ -68,4 +68,11 @@ class CustomersController extends Controller
 
         return response()->json(['exists' => $customer ? true : false, 'customer' => $customer]);
     }
+
+    // 查詢某一客戶資訊
+    public function searchCinfo ($id) {
+        $customer = Customers::find($id);
+
+        return response()->json($customer);
+    }
 }
