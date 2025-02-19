@@ -150,29 +150,126 @@ addMemberBtn.addEventListener('click', () => {
 });
 
 // ============= related to 查詢訂單 =============
-// 點擊[查詢]，
+// 驗證電話號碼
+function validateTel(tel) {
+  const regex = /^09\d{8}$/;
+  return regex.test(tel);
+}
+
+// 輸入電話號碼後，點擊[查詢]
 const cOrderSearchBtn = document.getElementById('cOrderSearchBtn');
-cOrderSearchBtn.addEventListener('click', () => {
+cOrderSearchBtn.addEventListener('click', async () => {
   // 取得使用者電話
   const cTel = cOrderSearchBtn.previousElementSibling.value;
 
-  // 到DB中透過cTel取到cId
-
-  let cId = 1;  // 之後串接資料庫取值！ => 並將cid寫入localStorage？
-  if (cId) {  // 若DB中有此人，
-    // 拿該cId 的所有訂單資料 from DB
-
-    // 將資料呈現在畫面上（到時候拿cOrderResult寫好的html做修改會更清楚）
-
-    // 出現cOrderResult的容器
-    document.getElementById('cOrderResult').classList.remove('d-none');
-    addMemberBtn.innerText = '新增訂單';
-  } else {  // 若無，出現新增訂單的畫面
-    document.getElementById('cOrderResult').innerText = '查無此會員，請新增會員及訂單！';
-
-    document.getElementById('cOrderResult').classList.remove('d-none');
-
+  if (!validateTel(cTel)) {
+    alert("請輸入有效的手機號碼（09 開頭，共 10 碼）");
+    return;
   }
 
-  addMemberBtn.classList.remove('d-none');
+  const url = `http://127.0.0.1:8000/api/c/check?tel=${cTel}`;
+
+  // 串接api
+  try {
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error(`HTTP 錯誤！狀態碼：${response.status}`);
+    }  // fetch() 本身不會因為 HTTP 404、500 等錯誤而拋出異常，因此利用 if (!response.ok) 手動檢查
+
+    const resultObj = await response.json();
+
+    if (resultObj.exists) {  // 若DB中有此人，
+      // 解構賦值拿該cId 的客戶資料、所有訂單資料
+      const { name, tel, addr, orders } = resultObj.customer;
+
+      const orderHTML = orders.map((order, index) => {
+        // 產生品種的<tr></tr>
+        const detailHTML = order.details.map(detail => `
+            <tr>
+              <td>
+                ${detail.var}
+              </td>
+              <td>
+                ${detail.num}
+              </td>
+              <td>
+                ${detail.price}
+              </td>
+            </tr>
+          `).join('');
+
+        // 計算單筆訂單的總價格
+        const total = order.details.reduce((sum, detail) => sum + detail.num * detail.price, 0);
+
+        return `<tr>
+                  <td>
+                    ${index + 1}
+                  </td>
+                  <td>
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>品種</th>
+                          <th>數量</th>
+                          <th>價格</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        ${detailHTML}
+                      </tbody>
+                    </table>
+                  </td>
+                  <td>
+                    ${total}
+                  </td>
+                  <td>
+                    ${order.date}
+                  </td>
+                </tr>
+      `}).join('');
+
+      // 將資料呈現在畫面上
+      document.getElementById('cOrderResult').innerHTML = `
+                <div class="border-bottom border-2 border-dark">
+                  <h5>
+                    <span>顧客姓名：</span><span>${name}</span>
+                    <span>電話：</span><span>${tel}</span>
+                    <span>地址：</span><span>${addr}</span>
+                  </h5>
+                </div>
+  
+                <!-- 訂單明細div -->
+                <div>
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>訂購內容</th>
+                        <th>總金額(NT$)</th>
+                        <th>日期</th>
+                      </tr>
+                    </thead>
+  
+                    <tbody>
+                      ${orderHTML}
+                    </tbody>
+                  </table>
+                </div>
+      `;
+
+      // 出現cOrderResult的容器
+      document.getElementById('cOrderResult').classList.remove('d-none');
+      addMemberBtn.innerText = '新增訂單';
+    } else {  // 若無DB中無此人，出現新增訂單的畫面
+      document.getElementById('cOrderResult').innerText = '查無此會員，請新增會員及訂單！';
+
+      document.getElementById('cOrderResult').classList.remove('d-none');
+    }
+
+    addMemberBtn.classList.remove('d-none');
+  } catch (error) {
+    console.error("API請求失敗", error);
+    alert("伺服器連線失敗，請稍後再試！");
+  }
 })
