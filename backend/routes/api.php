@@ -8,4 +8,8 @@ use Illuminate\Support\Facades\Route;
     // })->middleware('auth:sanctum');
     
 use App\Http\Controllers\CustomersController;
+use App\Http\Controllers\OrdersController;
+
 Route::post('/c', [CustomersController::class, 'addCnO']);
+Route::post('/o', [OrdersController::class, 'addOrder']);
+Route::get('/c/check', [CustomersController::class, 'searchC']);
