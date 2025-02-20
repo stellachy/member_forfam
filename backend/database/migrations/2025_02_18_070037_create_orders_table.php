@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('cid');  // 對應Customers中id的資料型態
             // 設立外鍵並設定當customers中id被刪除時，自動刪除此表中的有參照其id的資料
-            $table->foreign('cid')->references('id')->on('customers')->onDelete('cascade');
+            $table->foreign('cid')->references('id')->on('Customers')->onDelete('cascade');
             $table->json('details');
             $table->date('date');
         });
