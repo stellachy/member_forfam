@@ -88,7 +88,7 @@ async function createOrder() {
   if (!details) return;
 
   const cid = sessionStorage.getItem('cId') || '';
-  const url = cid ? 'http://35.171.28.132/api/o' : 'http://35.171.28.132/api/c';
+  const url = cid ? 'https://b.chfam.stellachy.online/api/o' : 'https://b.chfam.stellachy.online/api/c';
   const order = cid
     ? {cid, details, date: document.getElementById('oDate').value}
     : {
@@ -183,7 +183,7 @@ addMemberBtn.addEventListener('click', async () => {
   if (addMemberBtn.innerText == '新增訂單') {
     // 透過cId 取得該會員的資料
     let cId = sessionStorage.getItem('cId');
-    const url = `http://35.171.28.132/api/c/${cId}`;
+    const url = `https://b.chfam.stellachy.online/api/c/${cId}`;
     const response = await fetch(url);
     const resultObj = await response.json();
 
@@ -231,7 +231,7 @@ async function searchOrder() {
     return;
   }
 
-  const url = `http://35.171.28.132/api/c/check?tel=${cTel}`;
+  const url = `https://b.chfam.stellachy.online/api/c/check?tel=${cTel}`;
 
   // 串接api
   try {
