@@ -23,7 +23,7 @@ jobs:
       - name: 部署到 EC2
         run: |
           ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
-            cd /var/www/member_check/backend  # 進入你的 Laravel 專案目錄
+            cd /var/www/member_forfam/backend  # 進入 Laravel 專案目錄
             git pull  # 拉取最新程式碼
             composer install --no-dev --optimize-autoloader  # 安裝 PHP 套件
             php artisan migrate --force  # 執行資料庫遷移
