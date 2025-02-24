@@ -24,6 +24,7 @@ class CustomersController extends Controller
                 'details.*.num' => 'required|integer|min:1',
                 'details.*.price' => 'required|integer|min:1',
                 'date' => 'required|date',
+                'fee' => 'integer|min:0'
             ]);
 
             // transaction確保兩筆資料都要成功
@@ -38,7 +39,8 @@ class CustomersController extends Controller
             Orders::create([
                 'cid' => $customer->id,
                 'details' => json_encode($validated['details']),
-                'date' => $validated['date']
+                'date' => $validated['date'],
+                'fee' => $validated['fee']
             ]);
 
             DB::commit();

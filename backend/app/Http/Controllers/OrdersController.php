@@ -17,13 +17,15 @@ class OrdersController extends Controller
                 'details.*.var' => 'required|string|max:50',
                 'details.*.num' => 'required|integer|min:1',
                 'details.*.price' => 'required|integer|min:1',
-                'date' => 'required|date'
+                'date' => 'required|date',
+                'fee' => 'integer|min:0'
             ]);
 
             $order = Orders::create([
                 'cid' => $validated['cid'],
                 'details' => json_encode($validated['details']),
-                'date' => $validated['date']
+                'date' => $validated['date'],
+                'fee' => $validated['fee']
             ]);
 
             $order->details = json_decode($order->details);

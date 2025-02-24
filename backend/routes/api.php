@@ -15,6 +15,3 @@ Route::post('/c', [CustomersController::class, 'addCnO']);
 Route::post('/o', [OrdersController::class, 'addOrder']);
 Route::get('/c/check', [CustomersController::class, 'searchC']);
 Route::get('/c/{id}', [CustomersController::class, 'searchCinfo']);
-Route::get('/f', function () {
-    return Customers::all();
-});
