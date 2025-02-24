@@ -9,8 +9,12 @@ use Illuminate\Support\Facades\Route;
     
 use App\Http\Controllers\CustomersController;
 use App\Http\Controllers\OrdersController;
+use App\Models\Customers;
 
 Route::post('/c', [CustomersController::class, 'addCnO']);
 Route::post('/o', [OrdersController::class, 'addOrder']);
 Route::get('/c/check', [CustomersController::class, 'searchC']);
 Route::get('/c/{id}', [CustomersController::class, 'searchCinfo']);
+Route::get('/c', function () {
+    return Customers::all();
+});
