@@ -24,7 +24,9 @@ jobs:
         run: |
           ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
             cd /var/www/member_forfam/backend  # 進入 Laravel 專案目錄
-            git pull  # 拉取最新程式碼
+            git fetch --all
+            sudo git reset --hard origin/main # 放棄當前所有檔案與commit，更新為遠端最新版
+            git pull  # 確認是否up to date
             php artisan migrate  # 執行資料庫遷移
             sudo systemctl restart apache2  # 重啟 Apache
           EOF
