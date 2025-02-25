@@ -11,24 +11,20 @@ function showVarRow() {
   let row = document.createElement('tr');
   row.setAttribute('class', 'var-row');
 
+  // 之後的品種想調整為用[]來foreach輸出？
   row.innerHTML = `
                 <td>
-                  <!-- 品種總共有哪些？可以再跟mom check -->
                   <select class="rounded border-2 p-1">
-                    <option value="1">紅寶石芭樂苗</option>
+                    <option value="1" selected>紅寶石芭樂苗</option>
                     <option value="2">黃金蜜芭樂苗</option>
                     <option value="3">紅鑽芭樂苗</option>
-                    <option value="4" selected>珍珠芭樂苗</option>
+                    <option value="4">珍珠芭樂苗</option>
                   </select>
                 </td>
+                <td><input type="number" style="width: 40px;" class="rounded"></td>
+                <td><input type="number" style="width: 45px;" class="rounded"></td>
                 <td>
-                  <input type="number" style="width: 60px;" class="rounded">
-                </td>
-                <td>
-                  <input type="number" style="width: 90px;" class="rounded">
-                </td>
-                <td>
-                  <div class="btn btn-secondary btn-sm btn-delete-variety">刪除</div>
+                  <div class="btn btn-secondary btn-sm btn-delete-variety">✗</div>
                 </td>
     `;
 
@@ -52,6 +48,16 @@ function setDelBtn() {
 // 初始設定[刪除]的btn
 setDelBtn();
 
+// 計算運費
+const fee = document.getElementById('oFee');
+// 當件數有變動時，1) 計算運費 2) 計算total
+fee.nextElementSibling.addEventListener('change', calFee);
+fee.nextElementSibling.addEventListener('change', calTotal);
+function calFee() {
+  fee.innerText = fee.nextElementSibling.value * 250;
+}
+calFee();
+
 // 計算訂單的總金額
 function calTotal() {
   let total = 0;
@@ -61,6 +67,8 @@ function calTotal() {
 
     total += oNum * oPrice;
   });
+
+  total += parseInt(fee.innerText);
 
   // 將總金額display在畫面上
   document.getElementById('oTotal').innerText = total;
@@ -90,13 +98,14 @@ async function createOrder() {
   const cid = sessionStorage.getItem('cId') || '';
   const url = cid ? 'https://b.chfam.stellachy.online/api/o' : 'https://b.chfam.stellachy.online/api/c';
   const order = cid
-    ? {cid, details, date: document.getElementById('oDate').value}
+    ? {cid, details, date: document.getElementById('oDate').value, fee: parseInt(fee.innerText)}
     : {
       name: document.getElementById('cName').value,
       tel: document.getElementById('cTel').value,
       addr: document.getElementById('cAddr').value,
       details,
-      date: document.getElementById('oDate').value
+      date: document.getElementById('oDate').value,
+      fee: parseInt(fee.innerText)
     };
   
     try {
@@ -220,6 +229,12 @@ function validateTel(tel) {
 // 輸入電話號碼後，點擊[查詢]
 const cOrderSearchBtn = document.getElementById('cOrderSearchBtn');
 cOrderSearchBtn.addEventListener('click', searchOrder);
+// 點擊 Enter 即可查詢
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter') {
+    searchOrder();
+  } 
+});
 async function searchOrder() {
   // 清除sessionStorage中的cid
   sessionStorage.removeItem('cId');
@@ -343,3 +358,6 @@ async function searchOrder() {
     alert("伺服器連線失敗，請稍後再試！");
   }
 }
+
+// 修改用，之後刪掉：
+cOrderSearchBtn.previousElementSibling.value = '0912345678';

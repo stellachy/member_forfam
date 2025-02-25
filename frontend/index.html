@@ -17,7 +17,8 @@
     </header>
     <main>
       <div class="d-flex">
-        <input type="number" placeholder="請輸入電話號碼" class="rounded px-2 me-2" /> <div id="cOrderSearchBtn" class="btn btn-dark">查詢</div>
+        <input type="tel" placeholder="請輸入電話號碼" class="rounded px-2 me-2" />
+        <div id="cOrderSearchBtn" class="btn btn-dark">查詢</div>
       </div>
 
       <div id="cOrderResult" class="border border-dark border-2 rounded px-3 py-2 my-3 d-none">
@@ -32,7 +33,7 @@
           <h5>會員資料</h5>
           <p>姓名：<input id="cName" type="text" class="rounded"></p>
           <p>電話：<input id="cTel" type="tel" class="rounded"></p>
-          <p>地址：<input id="cAddr" type="text" class="rounded" style="width: 300px;" ></p>
+          <p>地址：<input id="cAddr" type="text" class="rounded" style="width: 265px;"></p>
           <hr class="border border-dark">
 
           <h5>訂購內容</h5>
@@ -51,27 +52,28 @@
                 <td>
                   <!-- 品種總共有哪些？可以再跟mom check -->
                   <select class="rounded border-2 p-1">
-                    <option value="1">紅寶石芭樂苗</option>
+                    <option value="1" selected>紅寶石芭樂苗</option>
                     <option value="2">黃金蜜芭樂苗</option>
                     <option value="3">紅鑽芭樂苗</option>
-                    <option value="4" selected>珍珠芭樂苗</option>
+                    <option value="4">珍珠芭樂苗</option>
                   </select>
                 </td>
-                <td><input type="number" style="width: 60px;" class="rounded"></td>
-                <td><input type="number" style="width: 90px;" class="rounded"></td>
+                <td><input type="number" style="width: 40px;" class="rounded"></td>
+                <td><input type="number" style="width: 45px;" class="rounded"></td>
                 <td>
-                  <div class="btn btn-secondary btn-sm btn-delete-variety">刪除</div>
+                  <div class="btn btn-secondary btn-sm btn-delete-variety">✗</div>
                 </td>
               </tr>
-
             </tbody>
           </table>
+
           <div id="addVarietyBtn" class="btn btn-secondary btn-sm">+ 品種</div>
           <hr class="border border-dark">
 
-          <div class="d-flex justify-content-between">
-            <h5><span>總金額：NT$ </span><span id="oTotal">0</span></h5>
+          <div class="d-flex justify-content-between flex-md-row flex-column">
+            <h5><span>運費：NT$ </span><span id="oFee">0</span> <input type="number" style="width: 35px;" class="ms-1 rounded"> 件</h5>
             <h5>訂單日期：<input id="oDate" type="date" class="rounded"></h5>
+            <h5><span>總金額：NT$ </span><span id="oTotal">0</span></h5>
           </div>
 
           <div class="text-center m-1">
@@ -83,7 +85,7 @@
     </main>
   </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.10/purify.min.js"></script>  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.10/purify.min.js"></script>
   <script src="index.js"></script>
 </body>
 
