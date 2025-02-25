@@ -50,11 +50,17 @@ setDelBtn();
 
 // 計算運費
 const fee = document.getElementById('oFee');
-// 當件數有變動時，1) 計算運費 2) 計算total
-fee.nextElementSibling.addEventListener('change', calFee);
-fee.nextElementSibling.addEventListener('change', calTotal);
+// 當運費之價格/件數有變動時，1) 計算運費 2) 計算total
+const feeNum = fee.previousElementSibling;
+const feePrice = fee.previousElementSibling.previousElementSibling;
+feeNum.addEventListener('change', calFee);
+feeNum.addEventListener('change', calTotal);
+feePrice.addEventListener('change', calFee);
+feePrice.addEventListener('change', calTotal);
 function calFee() {
-  fee.innerText = fee.nextElementSibling.value * 250;
+  const num = parseInt(feeNum.value) || 0;
+  const price = parseInt(feePrice.value) || 0;
+  fee.innerText = num * price;
 }
 calFee();
 
@@ -73,6 +79,7 @@ function calTotal() {
   // 將總金額display在畫面上
   document.getElementById('oTotal').innerText = total;
 }
+calTotal();
 
 // 觸發計算金額的時機（當數量、價格有變動時）
 function rowChange() {
@@ -121,6 +128,9 @@ async function createOrder() {
         alert('新增訂單成功！');
         // 清除使用者輸入
         document.getElementById('orderForm').reset();
+        // 讓運費、總金額的位置會是正確數字0（通常連續輸入可能會有問題）
+        calFee();
+        calTotal();
         // 收合新增訂單表
         document.getElementById('orderForm').parentElement.classList.add('d-none');
         // 重新觸發一次查詢，讓訂單表單 有變化後 立即呈現
@@ -157,6 +167,13 @@ function validateInputs() {
   }
   if (!date) {
     alert("請選擇訂單日期！");
+    return false;
+  }
+
+  const fNum = parseInt(feeNum.value) || 0;
+  const fPrice = parseInt(feePrice.value) || 0;
+  if (fNum < 0 || fPrice < 0 || (fNum === 0) !== (fPrice === 0)) {
+    alert("請確認運費數量與價格！");
     return false;
   }
 
@@ -235,6 +252,7 @@ document.addEventListener('keydown', (event) => {
     searchOrder();
   } 
 });
+
 async function searchOrder() {
   // 清除sessionStorage中的cid
   sessionStorage.removeItem('cId');
@@ -245,6 +263,9 @@ async function searchOrder() {
     alert("請輸入有效的手機號碼（09 開頭，共 10 碼）");
     return;
   }
+
+  // 將填資料的表格關上（避免重新查詢時會造成會員資料帶入錯誤～～）
+  document.getElementById('orderForm').parentElement.classList.add('d-none');
 
   const url = `https://b.chfam.stellachy.online/api/c/check?tel=${cTel}`;
 
@@ -279,62 +300,59 @@ async function searchOrder() {
           `).join('');
 
         // 計算單筆訂單的總價格
-        const total = order.details.reduce((sum, detail) => sum + detail.num * detail.price, 0);
+        let total = order.details.reduce((sum, detail) => sum + detail.num * detail.price, 0);
+        
+        total += order.fee;
+        return `
+            <div class="my-2 p-2 border border-2 rounded">
+              <div class="px-1 d-flex justify-content-between">
+                <strong ># ${index + 1}  訂單內容</strong>
+                <strong>日期：${order.date}</strong>
+              </div>
 
-        return `<tr>
-                  <td>
-                    ${index + 1}
-                  </td>
-                  <td>
-                    <table class="table">
-                      <thead>
-                        <tr>
-                          <th>品種</th>
-                          <th>數量</th>
-                          <th>價格</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        ${detailHTML}
-                      </tbody>
-                    </table>
-                  </td>
-                  <td>
-                    ${total}
-                  </td>
-                  <td>
-                    ${order.date}
-                  </td>
-                </tr>
+              <div class="d-flex flex-column flex-md-row">
+                <table class="table" style="max-width: 600px">
+                  <thead>
+                      <tr>
+                        <th>品種</th>
+                        <th>數量</th>
+                        <th>價格</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                    ${detailHTML}
+                  </tbody>
+                </table>
+                
+                <div style="min-width: 280px" class="px-1 d-flex justify-content-between flex-row">
+                    <strong>運費：NT$ ${order.fee}</strong>
+                    <strong>總金額：NT$ ${total} </strong>
+                </div>
+                  
+              </div>
+            </div>
       `}).join('');
 
       // 將資料呈現在畫面上
       document.getElementById('cOrderResult').innerHTML = DOMPurify.sanitize(`
                 <div class="border-bottom border-2 border-dark">
-                  <h5>
-                    <span>顧客姓名：</span><span>${name}</span>
-                    <span>電話：</span><span>${tel}</span>
-                    <span>地址：</span><span>${addr}</span>
-                  </h5>
+                
+                  <div style="max-width: 500px" class="d-flex justify-content-between pe-1">
+                    <h6>顧客姓名：${name}</h6>
+                    <h6>電話：${tel}</h6>
+                  </div>
+                  
+                  <div class="d-flex">
+                    <h6>地址：</h6>
+                    <h6 style="max-width: 260px; white-space: nowrap; overflow-x: auto;">
+                      ${addr}
+                    </h6>
+                  </div>
+                  
                 </div>
   
-                <!-- 訂單明細div -->
-                <div>
-                  <table class="table">
-                    <thead>
-                      <tr>
-                        <th>#</th>
-                        <th>訂購內容</th>
-                        <th>總金額(NT$)</th>
-                        <th>日期</th>
-                      </tr>
-                    </thead>
-  
-                    <tbody>
-                      ${orderHTML}
-                    </tbody>
-                  </table>
-                </div>
+                <!-- 訂單明細div -->                
+                  ${orderHTML}
       `);
 
       // 出現cOrderResult的容器
@@ -358,6 +376,3 @@ async function searchOrder() {
     alert("伺服器連線失敗，請稍後再試！");
   }
 }
-
-// 修改用，之後刪掉：
-cOrderSearchBtn.previousElementSibling.value = '0912345678';
