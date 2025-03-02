@@ -1,4 +1,5 @@
 // ============= related to 新增訂單 =============
+let variety = ['珍珠芭樂苗', '水晶芭樂苗', '翠玉芭樂苗', '翠蜜芭樂苗', '津翠芭樂苗', '水蜜芭樂苗', '香水芭樂苗', '黃金蜜芭樂苗', '天王星芭樂苗', '蘋果芭樂苗', '紅寶石芭樂苗', '紅鑽芭樂苗', '西瓜芭樂苗', '粉紅蜜芭樂苗', '粉紅超跑芭樂苗', '夏威夷芭樂苗'];
 // 點擊[＋品種]產生新的一列
 const addVarietyBtn = document.getElementById('addVarietyBtn');
 addVarietyBtn.addEventListener('click', showVarRow);  // btn會一直跑掉耶 => 換成div就沒問題～
@@ -7,18 +8,28 @@ function showVarRow() {
   const orderContent = document.getElementById('orderContent');
   // 找到tbody
   const orderBody = orderContent.children[1];
+  
+  // ＊＊辨識已經出現過的選項
+  // 1) 找到已經出現的品種
+  const selectedVarOpts = getSelectedVarOpts();
+  // 2) 過濾可以選的options
+  const availableVarOpts = variety.filter(v => !selectedVarOpts.includes(v));
+  // 如果品種已被新增完，就不新增新的<select>
+  if(availableVarOpts.length === 0) {
+    alert('所有品種都已選擇！');
+    return;
+  }
+
   // 建立一個新的tr元素 (因為appendChild需要是DOM元素)
   let row = document.createElement('tr');
   row.setAttribute('class', 'var-row');
 
-  // 之後的品種想調整為用[]來foreach輸出？
+  let varHTML = availableVarOpts.map(variety => `<option>${variety}</option>`).join('');
+
   row.innerHTML = `
                 <td>
                   <select class="rounded border-2 p-1">
-                    <option value="1" selected>紅寶石芭樂苗</option>
-                    <option value="2">黃金蜜芭樂苗</option>
-                    <option value="3">紅鑽芭樂苗</option>
-                    <option value="4">珍珠芭樂苗</option>
+                    ${varHTML}
                   </select>
                 </td>
                 <td><input type="number" style="width: 40px;" class="rounded"></td>
@@ -29,10 +40,62 @@ function showVarRow() {
     `;
 
   orderBody.appendChild(row);
+
+  // 新增監聽事件：當.var-row select中change時，會觸發！
+  row.querySelector('select').addEventListener('change', updateVarSelects);
+  // 每一個select也都要跟著updateVarSelects(這樣已經先新增的select也會跟著調整為正確的select～)
+  updateVarSelects();
+
   setDelBtn();
   rowChange();
+}
+// 預設的第一列品種列～
+showVarRow();
 
-  // 辨識已經出現過的選項？
+// 取得所有 已選 品種
+function getSelectedVarOpts() {
+  const selectedSet = new Set();  // 透過set來去除重複的elem
+
+  document.querySelectorAll('.var-row select').forEach(select => {
+    if (select.value) selectedSet.add(select.value);
+  })
+  return [...selectedSet];  // return為陣列 
+}
+
+// 更新所有.var-row 中的 <select>，確保不重複出現品種
+function updateVarSelects() {
+  const selectedVarOpts = getSelectedVarOpts();
+
+  document.querySelectorAll('.var-row select').forEach(select => {
+    const currenValue = select.value;
+    select.innerHTML = DOMPurify.sanitize(
+      variety
+        .filter(v => !selectedVarOpts.includes(v) || v === currenValue)
+        .map(v => `<option ${v === currenValue ? 'selected' : ''}>${v}</option>`)
+        .join('')
+    );
+  });
+}
+
+const addVarietyOptBtn = document.getElementById('addVarietyOptBtn');
+addVarietyOptBtn.addEventListener('click', showInput);
+let isEdited = false;
+function showInput() {
+  isEdited = !isEdited;
+  if (isEdited) {
+    // 顯示[+選項]的品種輸入框
+    addVarietyOptBtn.previousElementSibling.classList.remove('d-none');
+    
+    addVarietyOptBtn.innerText = '完成';
+  } else {
+    variety.unshift(addVarietyOptBtn.previousElementSibling.value);
+
+    addVarietyOptBtn.previousElementSibling.classList.add('d-none');
+
+    alert('已新增品種，請新增一列選取！');
+
+    addVarietyOptBtn.innerText = '+ 選項';
+  }
 }
 
 // 點擊[刪除]可以刪掉一列
@@ -42,6 +105,7 @@ function setDelBtn() {
 
     function deleteVarRow() {
       btn.parentElement.parentElement.remove();
+      updateVarSelects();  // 刪除時也須更新<select>
     }
   })
 }
@@ -247,7 +311,7 @@ function validateTel(tel) {
 const cOrderSearchBtn = document.getElementById('cOrderSearchBtn');
 cOrderSearchBtn.addEventListener('click', searchOrder);
 // 點擊 Enter 即可查詢
-document.addEventListener('keydown', (event) => {
+cOrderSearchBtn.previousElementSibling.addEventListener('keydown', (event) => {
   if (event.key === 'Enter') {
     searchOrder();
   } 
