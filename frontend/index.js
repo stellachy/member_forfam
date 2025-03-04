@@ -167,16 +167,22 @@ async function createOrder() {
   if (!details) return;
 
   const cid = sessionStorage.getItem('cId') || '';
-  const url = cid ? 'https://b.chfam.stellachy.online/api/o' : 'https://b.chfam.stellachy.online/api/c';
+  const url = cid ? 'http://127.0.0.1:8000/api/o' : 'http://127.0.0.1:8000/api/c';
+  const memoValue = document.getElementById('oMemo').value || null;
   const order = cid
-    ? {cid, details, date: document.getElementById('oDate').value, fee: parseInt(fee.innerText)}
+    ? {cid, details, 
+        date: document.getElementById('oDate').value, 
+        fee: parseInt(fee.innerText), 
+        memo: memoValue
+      }
     : {
       name: document.getElementById('cName').value,
       tel: document.getElementById('cTel').value,
       addr: document.getElementById('cAddr').value,
       details,
       date: document.getElementById('oDate').value,
-      fee: parseInt(fee.innerText)
+      fee: parseInt(fee.innerText),
+      memo: memoValue
     };
   
     try {
@@ -273,7 +279,7 @@ addMemberBtn.addEventListener('click', async () => {
   if (addMemberBtn.innerText == '新增訂單') {
     // 透過cId 取得該會員的資料
     let cId = sessionStorage.getItem('cId');
-    const url = `https://b.chfam.stellachy.online/api/c/${cId}`;
+    const url = `http://127.0.0.1:8000/api/c/${cId}`;
     const response = await fetch(url);
     const resultObj = await response.json();
 
@@ -331,7 +337,7 @@ async function searchOrder() {
   // 將填資料的表格關上（避免重新查詢時會造成會員資料帶入錯誤～～）
   document.getElementById('orderForm').parentElement.classList.add('d-none');
 
-  const url = `https://b.chfam.stellachy.online/api/c/check?tel=${cTel}`;
+  const url = `http://127.0.0.1:8000/api/c/check?tel=${cTel}`;
 
   // 串接api
   try {
@@ -388,9 +394,16 @@ async function searchOrder() {
                   </tbody>
                 </table>
                 
-                <div style="min-width: 280px" class="px-1 d-flex justify-content-between flex-row">
-                    <strong>運費：NT$ ${order.fee}</strong>
-                    <strong>總金額：NT$ ${total} </strong>
+                <div style="min-width: 280px" >
+                    <div class="px-1 d-flex justify-content-between flex-row">
+                      <strong>運費：NT$ ${order.fee}</strong>
+                      <strong>總金額：NT$ ${total} </strong>
+                    </div>
+                    <div class="px-1">
+                      <strong>備註：<input class="px-1 rounded" style="width: 238px" disabled 
+                        value="${order.memo ?? '無' }">
+                      </strong>
+                    </div>
                 </div>
                   
               </div>

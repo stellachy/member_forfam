@@ -57,19 +57,25 @@
           <hr class="border border-dark">
 
           <div class="d-flex justify-content-between flex-md-row flex-column">
-            <h5> 
+            <h5>
               <span>運費：</span>
               <input type="number" style="width: 45px;" class="ms-1 rounded">
-              × <input type="number" style="width: 35px;" class="ms-1 rounded"> 件 = NT$ 
+              × <input type="number" style="width: 35px;" class="ms-1 rounded"> 件 = NT$
               <span id="oFee">0</span>
             </h5>
             <h5>訂單日期：<input id="oDate" type="date" class="rounded"></h5>
             <h5><span>總金額：NT$ </span><span id="oTotal">0</span></h5>
           </div>
 
+          <div class="d-flex align-content-start flex-row">
+            <h5>備註：</h5>
+            <textarea id="oMemo" style="height: 80px; width: 245px; resize: none;" class="border border-2 border-dark ms-2 rounded"></textarea>
+          </div>
+
           <div class="text-center m-1">
             <div id="addOrderBtn" class="btn btn-secondary">新增訂單</div>
           </div>
+
 
         </form>
       </div>

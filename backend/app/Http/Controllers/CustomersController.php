@@ -17,14 +17,15 @@ class CustomersController extends Controller
             // 資料驗證
             $validated = $request->validate([
                 'name' => 'required|string|max:50',
-                'tel' => 'required|string|max:19',
+                'tel' => 'nullable|string|max:19',
                 'addr' => 'required|string|max:99',
                 'details' => 'required|array',  // 因為 JSON 進來時 Laravel 會自動轉成 array
                 'details.*.var' => 'required|string|max:50',
                 'details.*.num' => 'required|integer|min:1',
                 'details.*.price' => 'required|integer|min:1',
                 'date' => 'required|date',
-                'fee' => 'integer|min:0'
+                'fee' => 'nullable|integer|min:0', 
+                'memo' => 'nullable|string'
             ]);
 
             // transaction確保兩筆資料都要成功
@@ -32,7 +33,7 @@ class CustomersController extends Controller
 
             $customer = Customers::create([
                 'name' => $validated['name'],
-                'tel' => $validated['tel'],
+                'tel' => $validated['tel'] ?? null,
                 'addr' => $validated['addr']
             ]);
 
@@ -40,7 +41,8 @@ class CustomersController extends Controller
                 'cid' => $customer->id,
                 'details' => json_encode($validated['details']),
                 'date' => $validated['date'],
-                'fee' => $validated['fee']
+                'fee' => $validated['fee'] ?? 0,  // 若前端無傳"fee": 等部分，轉為0
+                'memo' => $validated['memo'] ?? null
             ]);
 
             DB::commit();

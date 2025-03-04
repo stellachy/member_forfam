@@ -18,14 +18,16 @@ class OrdersController extends Controller
                 'details.*.num' => 'required|integer|min:1',
                 'details.*.price' => 'required|integer|min:1',
                 'date' => 'required|date',
-                'fee' => 'integer|min:0'
+                'fee' => 'nullable|integer|min:0', 
+                'memo' => 'nullable|string'
             ]);
 
             $order = Orders::create([
                 'cid' => $validated['cid'],
                 'details' => json_encode($validated['details']),
                 'date' => $validated['date'],
-                'fee' => $validated['fee']
+                'fee' => $validated['fee'] ?? 0,
+                'memo' => $validated['memo'] ?? null
             ]);
 
             $order->details = json_decode($order->details);
